@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        input[type=text],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        label {
+            padding: 12px 12px 12px 0;
+            display: inline-block;
+        }
+
+        input[type=button] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .col-25 {
+            float: left;
+            width: 25%;
+            margin-top: 6px;
+        }
+
+        .col-75 {
+            float: left;
+            width: 75%;
+            margin-top: 6px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+        @media screen and (max-width: 600px) {
+
+            .col-25,
+            .col-75,
+            input[type=submit] {
+                width: 100%;
+                margin-top: 0;
+            }
+        }
+
+        .remove-all-styles {
+            all: revert;
+        }
+
+        /* The snackbar - position it at the bottom and in the middle of the screen */
+        #snackbar {
+            visibility: hidden;
+            /* Hidden by default. Visible on click */
+            min-width: 250px;
+            /* Set a default minimum width */
+            margin-left: -125px;
+            /* Divide value of min-width by 2 */
+            background-color: #333;
+            /* Black background color */
+            color: #fff;
+            /* White text color */
+            text-align: center;
+            /* Centered text */
+            border-radius: 2px;
+            /* Rounded borders */
+            padding: 16px;
+            /* Padding */
+            position: fixed;
+            /* Sit on top of the screen */
+            z-index: 1;
+            /* Add a z-index if needed */
+            left: 50%;
+            /* Center the snackbar */
+            bottom: 30px;
+            /* 30px from the bottom */
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible;
+            /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @-webkit-keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @-webkit-keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-25">
+                <label for="nome">Nome com sobrenome</label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="nome" name="nome" placeholder="Sênio Caires"
+                    onkeypress="changefield(this.value, 'nome-assinatura');">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="cargo">Cargo</label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="cargo" name="cargo" placeholder="Desenvolvedor"
+                    onkeypress="changefield(this.value, 'cargo-assinatura');">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="cargo">Certificações</label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="certificacoes" name="certificacoes" placeholder="Opcional"
+                    onkeypress="changefield(this.value, 'certificacoes-assinatura');">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="cargo">Telefone</label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="telefone" name="telefone" placeholder="(031) 99999-9999"
+                    onkeypress="changefield(this.value, 'telefone-assinatura');">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-25">
+                <label for="cargo">E-mail</label>
+            </div>
+            <div class="col-75">
+                <input type="text" id="email" name="email" placeholder="nome.sobrenome@pdcase.com.br"
+                    onkeypress="changefield(this.value, 'email-assinatura');">
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <input type="button" value="Copiar" onclick="copySignature()">
+        </div>
+
+    </div>
+
+    <br /><br /><br />
+
+    <div id="assinatura" class="remove-all-styles other-classe another-class">
+
+        <table id="tb-assinatura" class="sc-gPEVay eQYmiW"
+            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma;" cellspacing="0"
+            cellpadding="0">
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="sc-gPEVay eQYmiW"
+                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma;"
+                            cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td style="vertical-align: middle;" width="150"><span class="sc-kgAjT cuzzPp"
+                                            style="margin-right: 20px; display: block;"><img class="sc-cHGsZl bHiaRe"
+                                                style="max-width: 130px;"
+                                                src="https://www.pdcase.com/images/image001.png" width="130" /></span>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <h3 class="sc-fBuWsC eeihxG"
+                                            style="margin: 0px; font-size: 18px; color: #243750;">
+                                            <span id='nome-assinatura'>Sênio Caires</span>
+                                        </h3>
+                                        <p class="sc-fMiknA bxZCMx"
+                                            style="margin: 0px; color: #243750; font-size: 14px; line-height: 22px;">
+                                            <span id='cargo-assinatura'>Desenvolvedor</span>
+                                        </p>
+                                        <p class="sc-fMiknA bxZCMx"
+                                            style="margin: 0px; color: #243750; font-size: 14px; line-height: 22px;">
+                                            <span id='certificacoes-assinatura'></span>
+                                        </p>
+                                    </td>
+                                    <td width="30">&nbsp;</td>
+                                    <td class="sc-jhAzac hmXDXQ"
+                                        style="width: 1px; border-bottom: none; border-left: 1px solid #f3bb1d;"
+                                        width="1">
+                                        &nbsp;</td>
+                                    <td width="30">&nbsp;</td>
+                                    <td style="vertical-align: middle;">
+                                        <table class="sc-gPEVay eQYmiW"
+                                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma;"
+                                            cellspacing="0" cellpadding="0">
+                                            <tbody>
+                                                <tr style="vertical-align: middle;">
+                                                    <td style="vertical-align: middle;" width="30">
+                                                        <table class="sc-gPEVay eQYmiW"
+                                                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma;"
+                                                            cellspacing="0" cellpadding="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="vertical-align: bottom;"><span
+                                                                            class="sc-jlyJG bbyJzT"
+                                                                            style="display: block; background-color: #f3bb1d;"><img
+                                                                                class="sc-iRbamj blSEcj"
+                                                                                style="display: block; background-color: #f3bb1d;"
+                                                                                src="https://www.pdcase.com/images/image003.png"
+                                                                                width="13" /></span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td style="padding: 0px; color: #243750;" id='telefone-assinatura'>
+                                                        <a class="sc-gipzik iyhjGb"
+                                                            style="text-decoration: none; color: #243750; font-size: 12px;"
+                                                            href="tel:(031) 99999-9999">(031) 99999-9999</a>
+                                                    </td>
+                                                </tr>
+                                                <tr style="vertical-align: middle;">
+                                                    <td style="vertical-align: middle;" width="30">
+                                                        <table class="sc-gPEVay eQYmiW"
+                                                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma;"
+                                                            cellspacing="0" cellpadding="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="vertical-align: bottom;"><span
+                                                                            class="sc-jlyJG bbyJzT"
+                                                                            style="display: block; background-color: #f3bb1d;"><img
+                                                                                class="sc-iRbamj blSEcj"
+                                                                                style="display: block; background-color: #f3bb1d;"
+                                                                                src="https://www.pdcase.com/images/image005.png"
+                                                                                width="13" /></span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td style="padding: 0px;" id="email-assinatura"><a
+                                                            class="sc-gipzik iyhjGb"
+                                                            style="text-decoration: none; color: #243750; font-size: 12px;"
+                                                            href="mailto:nome.sobrenome@pdcase.com.br">nome.sobrenome@pdcase.com.br</a>
+                                                    </td>
+                                                </tr>
+                                                <tr style="vertical-align: middle;">
+                                                    <td style="vertical-align: middle;" width="30">
+                                                        <table class="sc-gPEVay eQYmiW"
+                                                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma;"
+                                                            cellspacing="0" cellpadding="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="vertical-align: bottom;"><span
+                                                                            class="sc-jlyJG bbyJzT"
+                                                                            style="display: block; background-color: #f3bb1d;"><img
+                                                                                class="sc-iRbamj blSEcj"
+                                                                                style="display: block; background-color: #f3bb1d;"
+                                                                                src="https://www.pdcase.com/images/image007.png"
+                                                                                width="13" /></span></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td style="padding: 0px;"><a class="sc-gipzik iyhjGb"
+                                                            style="text-decoration: none; color: #243750; font-size: 12px;"
+                                                            href="//www.pdcase.com"><span>www.pdcase.com</span></a></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="sc-gPEVay eQYmiW"
+                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma; width: 100%;"
+                            cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td height="30">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="sc-jhAzac hmXDXQ"
+                                        style="width: 100%; border-bottom: 1px solid #f3bb1d; border-left: none; display: block;"
+                                        height="1">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td height="30">&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="sc-gPEVay eQYmiW"
+                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma; width: 100%;"
+                            cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td style="vertical-align: top;"><img class="sc-cHGsZl bHiaRe"
+                                            style="max-width: 130px; display: inline-block;"
+                                            src="https://www.pdcase.com/images/image009.png" width="130" /></td>
+                                    <td style="text-align: right; vertical-align: top;">
+                                        <table class="sc-gPEVay eQYmiW"
+                                            style="vertical-align: -webkit-baseline-middle; font-size: medium; font-family: Tahoma; display: inline-block;"
+                                            cellspacing="0" cellpadding="0">
+                                            <tbody>
+                                                <tr style="text-align: right;">
+                                                    <td><a class="sc-hzDkRC kpsoyz"
+                                                            style="display: inline-block; padding: 0px; background-color: #f3bb1d;"
+                                                            href="https://br.linkedin.com/company/pd-case-informatica-ltda"><img
+                                                                class="sc-bRBYWo ccSRck"
+                                                                style="background-color: #f3bb1d; max-width: 135px; display: block;"
+                                                                src="https://www.pdcase.com/images/image011.png"
+                                                                alt="linkedin" height="24" /></a></td>
+                                                    <td width="5">&nbsp;</td>
+                                                    <td><a class="sc-hzDkRC kpsoyz"
+                                                            style="display: inline-block; padding: 0px; background-color: #f3bb1d;"
+                                                            href="https://www.instagram.com/pdcaseinformatica/"><img
+                                                                class="sc-bRBYWo ccSRck"
+                                                                style="background-color: #f3bb1d; max-width: 135px; display: block;"
+                                                                src="https://www.pdcase.com/images/image013.png"
+                                                                alt="instagram" height="24" /></a></td>
+                                                    <td width="5">&nbsp;</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="30">&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="gtx-trans" style="position: absolute; left: 147px; top: 92.5px;">&nbsp;</div>
+
+    </div>
+
+    <div id="snackbar">Assinatura copiada.</div>
+
+    <br />
+    <br />
+    <br />
+
+    <script>
+        var nome = "Sênio Caires";
+        var cargo = "Desenvolvedor";
+        var certificacoes = "";
+        var telefone = "(031) 99999-9999";
+        var email = "nome.sobrenome@pdcase.com.br";
+
+        startLoadStorage('nome', nome);
+        startLoadStorage('cargo', cargo);
+        startLoadStorage('certificacoes', certificacoes);
+        startLoadStorage('telefone', telefone);
+        startLoadStorage('email', email);
+
+        function startLoadStorage(item, value) {
+            if (!window.localStorage.getItem(item)) {
+                window.localStorage.setItem(item, value);
+            }
+            document.getElementById(item).value = window.localStorage.getItem(item);
+            changefield(window.localStorage.getItem(item), `${item}-assinatura`);
+        }
+
+        function changefield(value, id) {
+
+            if (id === 'telefone-assinatura') {
+                value = phoneContent(value);
+            } else if (id === 'email-assinatura') {
+                value = emailContent(value);
+            }
+
+            document.getElementById(id).innerHTML = value;
+        }
+
+        function copySignature() {
+            var range = document.createRange();
+            range.selectNode(document.getElementById("tb-assinatura"));
+            window.getSelection().removeAllRanges(); // clear current selection
+            window.getSelection().addRange(range); // to select text
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();// to deselect
+
+            fillStorage();
+
+            alertCopied();
+
+        }
+
+        function phoneContent(phoneNumber) {
+            return `<a class="sc-gipzik iyhjGb"
+                    style="text-decoration: none; color: #243750; font-size: 12px;"
+                    href="tel:${phoneNumber}">${phoneNumber}</a>`;
+        }
+
+        function emailContent(email) {
+            return `<a class="sc-gipzik iyhjGb"
+                    style="text-decoration: none; color: #243750; font-size: 12px;"
+                    href="mailto:${email}">${email}</a>`;
+        }
+
+
+        function fillStorage() {
+            localStorage.setItem('nome', document.getElementById('nome').value);
+            localStorage.setItem('cargo', document.getElementById('cargo').value);
+            localStorage.setItem('certificacoes', document.getElementById('certificacoes').value);
+            localStorage.setItem('telefone', document.getElementById('telefone').value);
+            localStorage.setItem('email', document.getElementById('email').value);
+        }
+
+        function alertCopied() {
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+        }
+
+
+    </script>
+
+</body>
+
+
+
+</html>
